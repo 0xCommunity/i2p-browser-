@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I2P Browser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0e1a 0%, #1a1d2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 20px;
+            border-bottom: 2px solid #00ff88;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .url-bar {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .url-input:focus {
+            border-color: #00ccff;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-home {
+            padding: 10px 15px;
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            color: #00ff88;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-home:hover {
+            background: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .status-bar {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 20px;
+            font-size: 12px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-online {
+            background: #00ff88;
+            box-shadow: 0 0 5px #00ff88;
+        }
+
+        .status-offline {
+            background: #ff4444;
+        }
+
+        .content-area {
+            padding: 20px;
+            min-height: calc(100vh - 120px);
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .welcome-screen h1 {
+            font-size: 48px;
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .welcome-screen p {
+            font-size: 18px;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .link-card:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+            transform: translateY(-5px);
+        }
+
+        .link-card h3 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        .link-card p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .browser-frame {
+            width: 100%;
+            min-height: 700px;
+            background: #fff;
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 255, 136, 0.2);
+            border-top: 4px solid #00ff88;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .error-message h3 {
+            color: #ff4444;
+            margin-bottom: 10px;
+        }
+
+        .tips {
+            background: rgba(0, 204, 255, 0.1);
+            border: 1px solid #00ccff;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .tips h4 {
+            color: #00ccff;
+            margin-bottom: 10px;
+        }
+
+        .tips ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tips li {
+            padding: 5px 0;
+            color: #888;
+        }
+
+        .tips li:before {
+            content: "💡 ";
+        }
+
+        .page-info {
+            margin-bottom: 10px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .page-info strong {
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">◈ I2P Browser</div>
+        <button class="btn-home" id="homeBtn" onclick="goHome()" style="display: none;">🏠 Home</button>
+        <div class="url-bar">
+            <input type="text" class="url-input" id="urlInput" placeholder="Enter URL (e.g., stats.i2p or bobthebuilder.i2p)">
+            <button class="btn" id="goBtn" onclick="navigate()">Go</button>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <div>
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="statusText">Checking I2P status...</span>
+        </div>
+        <div id="proxyInfo">Proxy: 127.0.0.1:4444</div>
+    </div>
+
+    <div class="content-area" id="contentArea">
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>◈ I2P Browser ◈</h1>
+            <p>Anonymous. Decentralized. Secure.</p>
+            
+            <div class="quick-links">
+                <div class="link-card" onclick="loadUrl('stats.i2p')">
+                    <h3>📊 I2P Stats</h3>
+                    <p>View I2P network statistics</p>
+                </div>
+                <div class="link-card" onclick="loadUrl('echelon.i2p')">
+                    <h3>📰 Echelon</h3>
+                    <p>I2P news site</p>
+                </div>
+                <div class="link-card" onclick="loadUrl('i2pforum.i2p')">
+                    <h3>💬 I2P Forum</h3>
+                    <p>I2P community forum</p>
+                </div>
+                <div class="link-card" onclick="loadUrl('127.0.0.1:7657')">
+                    <h3>⚙️ I2P Console</h3>
+                    <p>I2P router console</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="browserContent" style="display: none;">
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Connecting to I2P network...</p>
+                <p style="color: #888; font-size: 12px;">This may take a few minutes</p>
+            </div>
+            <div id="pageInfo" class="page-info" style="display: none;"></div>
+            <iframe id="contentFrame" class="browser-frame" style="display: none;" sandbox="allow-same-origin allow-scripts"></iframe>
+            <div id="pageContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUrl = '';
+
+        // Check I2P status
+        async function checkI2PStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                const indicator = document.getElementById('statusIndicator');
+                const statusText = document.getElementById('statusText');
+                
+                if (data.running) {
+                    indicator.className = 'status-indicator status-online';
+                    statusText.textContent = 'I2P router running';
+                } else {
+                    indicator.className = 'status-indicator status-offline';
+                    statusText.textContent = 'I2P router not running';
+                }
+            } catch (error) {
+                console.error('Status check failed:', error);
+            }
+        }
+
+        // Navigate to URL
+        async function navigate() {
+            const urlInput = document.getElementById('urlInput');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            loadUrl(url);
+        }
+
+        // Go to home page
+        function goHome() {
+            document.getElementById('welcomeScreen').style.display = 'block';
+            document.getElementById('browserContent').style.display = 'none';
+            document.getElementById('homeBtn').style.display = 'none';
+            document.getElementById('urlInput').value = '';
+            document.getElementById('contentFrame').src = '';
+            currentUrl = '';
+        }
+
+        // Load URL - using proxy method
+        async function loadUrl(url) {
+            console.log('🔹 Received URL:', url);
+            
+            // Clean URL - remove extra spaces and slashes
+            url = url.trim().replace(/^\/+|\/+$/g, '');
+            
+            // Check and fix protocol
+            const hasProtocol = url.startsWith('http://') || url.startsWith('https://');
+            if (!hasProtocol) {
+                url = 'http://' + url;
+            }
+            
+            // Validate URL format
+            try {
+                const urlObj = new URL(url);
+                console.log('✅ Valid URL:', urlObj.href);
+            } catch (e) {
+                console.error('❌ Invalid URL:', url, e);
+            }
+            
+            currentUrl = url;
+            document.getElementById('urlInput').value = url.replace('http://', '').replace('https://', '');
+            
+            // Show browser content area
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('browserContent').style.display = 'block';
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('pageInfo').style.display = 'none';
+            document.getElementById('contentFrame').style.display = 'none';
+            document.getElementById('pageContent').innerHTML = '';
+            
+            // Show home button
+            document.getElementById('homeBtn').style.display = 'block';
+            
+            // Disable button
+            document.getElementById('goBtn').disabled = true;
+            
+            console.log('🔸 Final URL to load:', url);
+            
+            // Set iframe source to proxy URL
+            const frame = document.getElementById('contentFrame');
+            frame.onload = function() {
+                console.log('✅ Page loaded');
+                document.getElementById('loadingIndicator').style.display = 'none';
+                frame.style.display = 'block';
+                
+                // Show page info
+                const pageInfo = document.getElementById('pageInfo');
+                pageInfo.innerHTML = `<strong>URL:</strong> ${escapeHtml(url)}`;
+                pageInfo.style.display = 'block';
+                
+                document.getElementById('goBtn').disabled = false;
+            };
+            
+            frame.onerror = function() {
+                console.error('❌ Page load error');
+                document.getElementById('loadingIndicator').style.display = 'none';
+                showError('Failed to load page');
+                document.getElementById('goBtn').disabled = false;
+            };
+            
+            // Use query parameter to pass URL, avoiding path parsing issues
+            const proxyUrl = window.location.protocol + '//' + window.location.host + '/proxy?url=' + encodeURIComponent(url);
+            console.log('🔗 Proxy URL:', proxyUrl);
+            frame.src = proxyUrl;
+        }
+
+        // Show error
+        function showError(error, tips) {
+            let html = `
+                <div class="error-message">
+                    <h3>❌ Error</h3>
+                    <p>${escapeHtml(error)}</p>
+            `;
+            
+            if (tips && tips.length > 0) {
+                html += `
+                    <div class="tips">
+                        <h4>💡 Tips</h4>
+                        <ul>
+                `;
+                tips.forEach(tip => {
+                    html += `<li>${escapeHtml(tip)}</li>`;
+                });
+                html += `</ul></div>`;
+            }
+            
+            html += `</div>`;
+            document.getElementById('pageContent').innerHTML = html;
+        }
+
+        // HTML escape
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enter key navigation
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                navigate();
+            }
+        });
+
+        // Check status on page load
+        checkI2PStatus();
+        
+        // Check status every 30 seconds
+        setInterval(checkI2PStatus, 30000);
+    </script>
+</body>
+</html>

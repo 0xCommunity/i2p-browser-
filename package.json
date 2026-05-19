@@ -1,0 +1,32 @@
+{
+  "name": "i2p-browser",
+  "version": "1.0.0",
+  "description": "A secure browser with built-in I2P plugin support",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "tsc",
+    "dev": "tsc && electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "keywords": [
+    "i2p",
+    "browser",
+    "privacy",
+    "anonymous",
+    "secure"
+  ],
+  "author": "I2P Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "electron": "^25.0.0",
+    "electron-builder": "^23.0.0",
+    "typescript": "^4.8.0"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "express": "^4.18.0"
+  }
+}
