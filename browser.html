@@ -11,224 +11,429 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary-color: #00d4ff;
+            --accent-color: #a855f7;
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #6b7280;
+            --error-color: #ff4444;
+            --success-color: #00ff88;
+            --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.15);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0c0e1a 0%, #1a1d2e 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #0d1117 100%);
+            color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .header {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px 20px;
-            border-bottom: 2px solid #00ff88;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-glass);
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00ff88;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #000;
+            font-weight: 800;
         }
 
         .url-bar {
             flex: 1;
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            max-width: 800px;
         }
 
         .url-input {
             flex: 1;
-            padding: 10px 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #00ff88;
-            border-radius: 5px;
-            color: #fff;
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            color: var(--text-primary);
             font-size: 14px;
             outline: none;
+            transition: all 0.3s ease;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+        }
+
+        .url-input::placeholder {
+            color: var(--text-muted);
         }
 
         .url-input:focus {
-            border-color: #00ccff;
-            box-shadow: 0 0 10px rgba(0, 204, 255, 0.3);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-glow), 0 0 0 1px var(--primary-color);
+            background: rgba(0, 255, 136, 0.02);
         }
 
         .btn {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
             color: #000;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.35);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .btn-home {
-            padding: 10px 15px;
-            background: rgba(0, 255, 136, 0.2);
-            border: 1px solid #00ff88;
-            border-radius: 5px;
-            color: #00ff88;
-            font-weight: bold;
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-home:hover {
-            background: rgba(0, 255, 136, 0.3);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-glow);
         }
 
         .status-bar {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 8px 20px;
-            font-size: 12px;
-            color: #888;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 24px;
+            font-size: 13px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
+            display: inline-flex;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            margin-right: 5px;
+            transition: all 0.3s ease;
         }
 
         .status-online {
-            background: #00ff88;
-            box-shadow: 0 0 5px #00ff88;
+            background: var(--success-color);
+            box-shadow: 0 0 12px var(--success-color);
+            animation: pulse 2s infinite;
         }
 
         .status-offline {
-            background: #ff4444;
+            background: var(--error-color);
+            box-shadow: 0 0 8px var(--error-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            color: var(--text-secondary);
+        }
+
+        .proxy-info {
+            color: var(--text-muted);
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
         }
 
         .content-area {
-            padding: 20px;
-            min-height: calc(100vh - 120px);
+            padding: 24px;
+            min-height: calc(100vh - 110px);
         }
 
         .welcome-screen {
             text-align: center;
-            padding: 50px 20px;
+            padding: 60px 20px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .welcome-screen h1 {
-            font-size: 48px;
-            color: #00ff88;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        .welcome-header {
+            margin-bottom: 40px;
         }
 
-        .welcome-screen p {
+        .welcome-title {
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .welcome-subtitle {
             font-size: 18px;
-            color: #888;
-            margin-bottom: 30px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .quick-links {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            max-width: 800px;
-            margin: 0 auto;
+            animation: fadeInUp 0.6s ease 0.2s both;
         }
 
         .link-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            border-radius: 10px;
-            padding: 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 24px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .link-card:hover::before {
+            transform: scaleX(1);
         }
 
         .link-card:hover {
-            background: rgba(0, 255, 136, 0.1);
-            border-color: #00ff88;
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-card), var(--shadow-glow);
+            background: rgba(0, 255, 136, 0.03);
         }
 
         .link-card h3 {
-            color: #00ff88;
-            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .link-card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .link-card-title {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .link-card p {
-            color: #888;
+            color: var(--text-muted);
             font-size: 14px;
+            line-height: 1.5;
         }
 
         .browser-frame {
             width: 100%;
             min-height: 700px;
-            background: #fff;
-            border: 1px solid #00ff88;
-            border-radius: 5px;
+            background: #ffffff;
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
         }
 
         .loading {
             text-align: center;
-            padding: 50px;
+            padding: 80px 20px;
+        }
+
+        .spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
         }
 
         .spinner {
-            border: 4px solid rgba(0, 255, 136, 0.2);
-            border-top: 4px solid #00ff88;
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--bg-card);
+            border-top-color: var(--primary-color);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            animation: spin 1.5s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .loading-subtext {
+            font-size: 13px;
+            color: var(--text-muted);
         }
 
         .error-message {
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid #ff4444;
-            border-radius: 5px;
-            padding: 20px;
+            background: rgba(255, 68, 68, 0.08);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 24px;
             margin: 20px 0;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .error-message h3 {
-            color: #ff4444;
-            margin-bottom: 10px;
+            color: var(--error-color);
+            margin-bottom: 12px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message p {
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
         .tips {
-            background: rgba(0, 204, 255, 0.1);
-            border: 1px solid #00ccff;
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 20px;
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
         }
 
         .tips h4 {
-            color: #00ccff;
-            margin-bottom: 10px;
+            color: var(--secondary-color);
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .tips ul {
@@ -237,29 +442,89 @@
         }
 
         .tips li {
-            padding: 5px 0;
-            color: #888;
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+            position: relative;
+            padding-left: 24px;
         }
 
-        .tips li:before {
-            content: "💡 ";
+        .tips li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--secondary-color);
         }
 
         .page-info {
-            margin-bottom: 10px;
-            color: #888;
-            font-size: 14px;
+            margin-bottom: 16px;
+            padding: 14px 20px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .page-info strong {
-            color: #00ff88;
+        .page-info-label {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .page-info-value {
+            color: var(--primary-color);
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .url-bar {
+                width: 100%;
+                order: 3;
+            }
+
+            .welcome-title {
+                font-size: 36px;
+            }
+
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+
+            .link-card {
+                padding: 20px;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">◈ I2P Browser</div>
-        <button class="btn-home" id="homeBtn" onclick="goHome()" style="display: none;">🏠 Home</button>
+        <div class="logo">
+            <span class="logo-icon">◈</span>
+            I2P Browser
+        </div>
+        <button class="btn-home" id="homeBtn" onclick="goHome()" style="display: none;">
+            🏠 Home
+        </button>
         <div class="url-bar">
             <input type="text" class="url-input" id="urlInput" placeholder="Enter URL (e.g., stats.i2p or bobthebuilder.i2p)">
             <button class="btn" id="goBtn" onclick="navigate()">Go</button>
@@ -267,45 +532,66 @@
     </div>
 
     <div class="status-bar">
-        <div>
+        <div class="status-left">
             <span class="status-indicator" id="statusIndicator"></span>
-            <span id="statusText">Checking I2P status...</span>
+            <span class="status-text" id="statusText">Checking I2P status...</span>
         </div>
-        <div id="proxyInfo">Proxy: 127.0.0.1:4444</div>
+        <div class="proxy-info" id="proxyInfo">Proxy: 127.0.0.1:4444</div>
     </div>
 
     <div class="content-area" id="contentArea">
         <div class="welcome-screen" id="welcomeScreen">
-            <h1>◈ I2P Browser ◈</h1>
-            <p>Anonymous. Decentralized. Secure.</p>
+            <div class="welcome-header">
+                <h1 class="welcome-title">◈ I2P Browser ◈</h1>
+                <p class="welcome-subtitle">Anonymous. Decentralized. Secure.</p>
+            </div>
             
             <div class="quick-links">
                 <div class="link-card" onclick="loadUrl('stats.i2p')">
-                    <h3>📊 I2P Stats</h3>
-                    <p>View I2P network statistics</p>
+                    <h3>
+                        <span class="link-card-icon">📊</span>
+                        <span class="link-card-title">I2P Stats</span>
+                    </h3>
+                    <p>View real-time I2P network statistics and performance metrics</p>
                 </div>
                 <div class="link-card" onclick="loadUrl('echelon.i2p')">
-                    <h3>📰 Echelon</h3>
-                    <p>I2P news site</p>
+                    <h3>
+                        <span class="link-card-icon">📰</span>
+                        <span class="link-card-title">Echelon</span>
+                    </h3>
+                    <p>Stay updated with the latest news from the I2P community</p>
                 </div>
                 <div class="link-card" onclick="loadUrl('i2pforum.i2p')">
-                    <h3>💬 I2P Forum</h3>
-                    <p>I2P community forum</p>
+                    <h3>
+                        <span class="link-card-icon">💬</span>
+                        <span class="link-card-title">I2P Forum</span>
+                    </h3>
+                    <p>Join discussions with the I2P community</p>
                 </div>
                 <div class="link-card" onclick="loadUrl('127.0.0.1:7657')">
-                    <h3>⚙️ I2P Console</h3>
-                    <p>I2P router console</p>
+                    <h3>
+                        <span class="link-card-icon">⚙️</span>
+                        <span class="link-card-title">I2P Console</span>
+                    </h3>
+                    <p>Configure and manage your I2P router settings</p>
                 </div>
             </div>
         </div>
 
         <div id="browserContent" style="display: none;">
             <div class="loading" id="loadingIndicator">
-                <div class="spinner"></div>
-                <p>Connecting to I2P network...</p>
-                <p style="color: #888; font-size: 12px;">This may take a few minutes</p>
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <div>
+                        <p class="loading-text">Connecting to I2P network...</p>
+                        <p class="loading-subtext">This may take a few minutes</p>
+                    </div>
+                </div>
             </div>
-            <div id="pageInfo" class="page-info" style="display: none;"></div>
+            <div id="pageInfo" class="page-info" style="display: none;">
+                <span class="page-info-label">URL:</span>
+                <span class="page-info-value" id="pageUrl"></span>
+            </div>
             <iframe id="contentFrame" class="browser-frame" style="display: none;" sandbox="allow-same-origin allow-scripts"></iframe>
             <div id="pageContent"></div>
         </div>
@@ -314,7 +600,6 @@
     <script>
         let currentUrl = '';
 
-        // Check I2P status
         async function checkI2PStatus() {
             try {
                 const response = await fetch('/api/status');
@@ -335,7 +620,6 @@
             }
         }
 
-        // Navigate to URL
         async function navigate() {
             const urlInput = document.getElementById('urlInput');
             const url = urlInput.value.trim();
@@ -348,7 +632,6 @@
             loadUrl(url);
         }
 
-        // Go to home page
         function goHome() {
             document.getElementById('welcomeScreen').style.display = 'block';
             document.getElementById('browserContent').style.display = 'none';
@@ -358,20 +641,16 @@
             currentUrl = '';
         }
 
-        // Load URL - using proxy method
         async function loadUrl(url) {
             console.log('🔹 Received URL:', url);
             
-            // Clean URL - remove extra spaces and slashes
             url = url.trim().replace(/^\/+|\/+$/g, '');
             
-            // Check and fix protocol
             const hasProtocol = url.startsWith('http://') || url.startsWith('https://');
             if (!hasProtocol) {
                 url = 'http://' + url;
             }
             
-            // Validate URL format
             try {
                 const urlObj = new URL(url);
                 console.log('✅ Valid URL:', urlObj.href);
@@ -382,7 +661,6 @@
             currentUrl = url;
             document.getElementById('urlInput').value = url.replace('http://', '').replace('https://', '');
             
-            // Show browser content area
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('browserContent').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'block';
@@ -390,25 +668,21 @@
             document.getElementById('contentFrame').style.display = 'none';
             document.getElementById('pageContent').innerHTML = '';
             
-            // Show home button
             document.getElementById('homeBtn').style.display = 'block';
             
-            // Disable button
             document.getElementById('goBtn').disabled = true;
             
             console.log('🔸 Final URL to load:', url);
             
-            // Set iframe source to proxy URL
             const frame = document.getElementById('contentFrame');
             frame.onload = function() {
                 console.log('✅ Page loaded');
                 document.getElementById('loadingIndicator').style.display = 'none';
                 frame.style.display = 'block';
                 
-                // Show page info
-                const pageInfo = document.getElementById('pageInfo');
-                pageInfo.innerHTML = `<strong>URL:</strong> ${escapeHtml(url)}`;
-                pageInfo.style.display = 'block';
+                const pageUrl = document.getElementById('pageUrl');
+                pageUrl.textContent = url;
+                document.getElementById('pageInfo').style.display = 'flex';
                 
                 document.getElementById('goBtn').disabled = false;
             };
@@ -420,13 +694,11 @@
                 document.getElementById('goBtn').disabled = false;
             };
             
-            // Use query parameter to pass URL, avoiding path parsing issues
             const proxyUrl = window.location.protocol + '//' + window.location.host + '/proxy?url=' + encodeURIComponent(url);
             console.log('🔗 Proxy URL:', proxyUrl);
             frame.src = proxyUrl;
         }
 
-        // Show error
         function showError(error, tips) {
             let html = `
                 <div class="error-message">
@@ -437,7 +709,7 @@
             if (tips && tips.length > 0) {
                 html += `
                     <div class="tips">
-                        <h4>💡 Tips</h4>
+                        <h4>Tips</h4>
                         <ul>
                 `;
                 tips.forEach(tip => {
@@ -450,24 +722,20 @@
             document.getElementById('pageContent').innerHTML = html;
         }
 
-        // HTML escape
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Enter key navigation
         document.getElementById('urlInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 navigate();
             }
         });
 
-        // Check status on page load
         checkI2PStatus();
         
-        // Check status every 30 seconds
         setInterval(checkI2PStatus, 30000);
     </script>
 </body>
