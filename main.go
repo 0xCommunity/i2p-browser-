@@ -13,6 +13,8 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	webview2 "github.com/jchv/go-webview2"
 )
 
 // I2P proxy configuration
@@ -36,15 +38,37 @@ func main() {
 	// Start web server
 	go startWebServer()
 
-	// Open browser in default web browser
+	// Open the UI in an embedded browser window (WebView2, built into Windows)
 	browserURL := "http://127.0.0.1:" + BROWSER_PORT
-	fmt.Printf("🌐 Opening browser at %s\n", browserURL)
-	openBrowser(browserURL)
+	fmt.Printf("🌐 Starting embedded browser at %s\n", browserURL)
+	fmt.Println("Close the window to exit\n")
 
-	fmt.Println("Press Ctrl+C to exit\n")
+	// Blocks until the window is closed
+	runEmbeddedBrowser(browserURL)
+}
 
-	// Keep running
-	select {}
+// runEmbeddedBrowser shows the UI in an embedded WebView2 window.
+// Falls back to the system browser if WebView2 is unavailable.
+func runEmbeddedBrowser(url string) {
+	w := webview2.NewWithOptions(webview2.WebViewOptions{
+		Debug:     false,
+		AutoFocus: true,
+		WindowOptions: webview2.WindowOptions{
+			Title:  "I2P Browser",
+			Width:  1280,
+			Height: 800,
+			Center: true,
+		},
+	})
+	if w == nil {
+		fmt.Println("⚠️  WebView2 runtime not available, falling back to system browser")
+		openBrowser(url)
+		select {}
+		return
+	}
+	defer w.Destroy()
+	w.Navigate(url)
+	w.Run()
 }
 
 func monitorI2P() {
