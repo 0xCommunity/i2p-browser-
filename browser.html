@@ -12,208 +12,298 @@
         }
 
         :root {
-            --primary-color: #00ff88;
-            --primary-dark: #00cc6a;
-            --secondary-color: #00d4ff;
-            --accent-color: #a855f7;
-            --bg-dark: #0a0a0f;
-            --bg-card: rgba(255, 255, 255, 0.03);
-            --bg-glass: rgba(255, 255, 255, 0.05);
-            --border-glass: rgba(255, 255, 255, 0.1);
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --text-muted: #6b7280;
-            --error-color: #ff4444;
-            --success-color: #00ff88;
-            --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.15);
-            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --primary: #4ade80;
+            --primary-strong: #22c55e;
+            --secondary: #38bdf8;
+            --accent: #a78bfa;
+            --bg-deep: #060810;
+            --bg-panel: rgba(255, 255, 255, 0.04);
+            --bg-panel-hover: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.14);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --error: #f87171;
+            --success: #4ade80;
+            --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+        }
+
+        html, body {
+            height: 100%;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #0d1117 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg-deep);
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* Animated ambient background */
+        .ambient {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(74, 222, 128, 0.10), transparent),
+                radial-gradient(ellipse 60% 40% at 90% 10%, rgba(56, 189, 248, 0.08), transparent),
+                radial-gradient(ellipse 50% 40% at 50% 110%, rgba(167, 139, 250, 0.07), transparent),
+                var(--bg-deep);
+        }
+
+        .ambient::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black, transparent);
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black, transparent);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.35;
+            animation: drift 24s ease-in-out infinite alternate;
+        }
+
+        .orb-1 {
+            width: 420px;
+            height: 420px;
+            background: rgba(74, 222, 128, 0.18);
+            top: -140px;
+            left: -100px;
+        }
+
+        .orb-2 {
+            width: 360px;
+            height: 360px;
+            background: rgba(56, 189, 248, 0.16);
+            top: 10%;
+            right: -120px;
+            animation-delay: -8s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: rgba(167, 139, 250, 0.15);
+            bottom: -100px;
+            left: 35%;
+            animation-delay: -16s;
+        }
+
+        @keyframes drift {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(40px, 30px) scale(1.12); }
+        }
+
+        /* ── Header ─────────────────────────────── */
         .header {
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border-glass);
+            background: rgba(10, 14, 24, 0.72);
+            backdrop-filter: blur(24px) saturate(1.4);
+            -webkit-backdrop-filter: blur(24px) saturate(1.4);
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         }
 
         .logo {
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.2px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            white-space: nowrap;
+            user-select: none;
         }
 
         .logo-icon {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 8px;
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            color: #000;
-            font-weight: 800;
+            box-shadow: 0 0 18px rgba(74, 222, 128, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+
+        .logo-icon svg {
+            width: 19px;
+            height: 19px;
+            color: #04120a;
+        }
+
+        .logo-text {
+            background: linear-gradient(120deg, #e2e8f0 20%, var(--primary) 60%, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .url-bar {
             flex: 1;
             display: flex;
-            gap: 12px;
-            max-width: 800px;
+            align-items: center;
+            gap: 6px;
+            max-width: 860px;
+            margin: 0 auto;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 5px 5px 5px 16px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+
+        .url-bar:focus-within {
+            border-color: rgba(74, 222, 128, 0.55);
+            background: rgba(74, 222, 128, 0.04);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12), 0 0 24px rgba(74, 222, 128, 0.10);
+        }
+
+        .url-bar .url-lock {
+            flex-shrink: 0;
+            width: 15px;
+            height: 15px;
+            color: var(--text-muted);
         }
 
         .url-input {
             flex: 1;
-            padding: 12px 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: 12px;
+            min-width: 0;
+            padding: 8px 4px;
+            background: transparent;
+            border: none;
             color: var(--text-primary);
             font-size: 14px;
             outline: none;
-            transition: all 0.3s ease;
-            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            font-family: var(--font-mono);
         }
 
         .url-input::placeholder {
             color: var(--text-muted);
-        }
-
-        .url-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-glow), 0 0 0 1px var(--primary-color);
-            background: rgba(0, 255, 136, 0.02);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .btn {
-            padding: 12px 28px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 9px 22px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-strong));
             border: none;
-            border-radius: 12px;
-            color: #000;
-            font-weight: 600;
+            border-radius: 999px;
+            color: #04120a;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
+            transition: all 0.25s ease;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.35);
+            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+            filter: brightness(1.08);
         }
 
         .btn:active {
-            transform: translateY(0);
+            transform: scale(0.97);
         }
 
         .btn:disabled {
-            opacity: 0.5;
+            opacity: 0.45;
             cursor: not-allowed;
-            transform: none;
             box-shadow: none;
+            filter: none;
         }
 
-        .btn-home {
-            padding: 12px 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-weight: 500;
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
+            transition: all 0.25s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .btn-home:hover {
-            background: rgba(0, 255, 136, 0.1);
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-glow);
+        .btn-icon svg {
+            width: 17px;
+            height: 17px;
         }
 
+        .btn-icon:hover {
+            color: var(--primary);
+            border-color: rgba(74, 222, 128, 0.5);
+            background: rgba(74, 222, 128, 0.08);
+            box-shadow: 0 0 14px rgba(74, 222, 128, 0.15);
+        }
+
+        .btn-icon:active {
+            transform: scale(0.92);
+        }
+
+        /* ── Status bar ─────────────────────────── */
         .status-bar {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 10px 24px;
-            font-size: 13px;
+            background: rgba(10, 14, 24, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 9px 24px;
+            font-size: 12.5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-glass);
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
         }
 
         .status-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .status-indicator {
             display: inline-flex;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             transition: all 0.3s ease;
         }
 
         .status-online {
-            background: var(--success-color);
-            box-shadow: 0 0 12px var(--success-color);
-            animation: pulse 2s infinite;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse 2.2s ease-in-out infinite;
         }
 
         .status-offline {
-            background: var(--error-color);
-            box-shadow: 0 0 8px var(--error-color);
+            background: var(--error);
+            box-shadow: 0 0 8px var(--error);
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.55; transform: scale(0.85); }
         }
 
         .status-text {
@@ -222,47 +312,78 @@
 
         .proxy-info {
             color: var(--text-muted);
-            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            font-family: var(--font-mono);
+            font-size: 12px;
         }
 
+        /* ── Content ────────────────────────────── */
         .content-area {
-            padding: 24px;
+            padding: 28px 24px 40px;
             min-height: calc(100vh - 110px);
         }
 
         .welcome-screen {
             text-align: center;
-            padding: 60px 20px;
-            max-width: 900px;
+            padding: 64px 20px 40px;
+            max-width: 980px;
             margin: 0 auto;
         }
 
-        .welcome-header {
-            margin-bottom: 40px;
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            border-radius: 999px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 12.5px;
+            font-weight: 500;
+            margin-bottom: 28px;
+            animation: fadeInUp 0.55s ease both;
+        }
+
+        .welcome-badge svg {
+            width: 14px;
+            height: 14px;
+            color: var(--primary);
         }
 
         .welcome-title {
-            font-size: 56px;
+            font-size: clamp(40px, 7vw, 68px);
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            letter-spacing: -1.5px;
+            line-height: 1.08;
+            margin-bottom: 18px;
+            animation: fadeInUp 0.55s ease 0.06s both;
+        }
+
+        .welcome-title .gradient {
+            background: linear-gradient(115deg, var(--primary) 10%, var(--secondary) 55%, var(--accent) 95%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 16px;
-            animation: fadeInUp 0.6s ease;
         }
 
         .welcome-subtitle {
-            font-size: 18px;
+            font-size: 17px;
             color: var(--text-secondary);
             font-weight: 400;
-            animation: fadeInUp 0.6s ease 0.1s both;
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.6;
+            animation: fadeInUp 0.55s ease 0.12s both;
+        }
+
+        .welcome-header {
+            margin-bottom: 52px;
         }
 
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(22px);
             }
             to {
                 opacity: 1;
@@ -272,109 +393,141 @@
 
         .quick-links {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            animation: fadeInUp 0.6s ease 0.2s both;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            text-align: left;
         }
 
         .link-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border-glass);
-            border-radius: 16px;
-            padding: 24px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            animation: fadeInUp 0.55s ease both;
         }
 
-        .link-card::before {
+        .link-card:nth-child(1) { animation-delay: 0.18s; }
+        .link-card:nth-child(2) { animation-delay: 0.24s; }
+        .link-card:nth-child(3) { animation-delay: 0.30s; }
+        .link-card:nth-child(4) { animation-delay: 0.36s; }
+
+        .link-card::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
+            inset: 0;
+            background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), rgba(74, 222, 128, 0.09), transparent 65%);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            pointer-events: none;
         }
 
-        .link-card:hover::before {
-            transform: scaleX(1);
+        .link-card:hover::after {
+            opacity: 1;
         }
 
         .link-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-card), var(--shadow-glow);
-            background: rgba(0, 255, 136, 0.03);
+            transform: translateY(-5px);
+            border-color: var(--border-strong);
+            background: var(--bg-panel-hover);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .link-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .link-card-head {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            margin-bottom: 14px;
         }
 
         .link-card-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+            width: 42px;
+            height: 42px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            transition: transform 0.35s ease;
         }
 
-        .link-card-title {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .link-card:hover .link-card-icon {
+            transform: scale(1.08) rotate(-4deg);
+        }
+
+        .link-card-icon svg {
+            width: 21px;
+            height: 21px;
+        }
+
+        .icon-green { background: rgba(74, 222, 128, 0.12); color: var(--primary); }
+        .icon-blue { background: rgba(56, 189, 248, 0.12); color: var(--secondary); }
+        .icon-purple { background: rgba(167, 139, 250, 0.12); color: var(--accent); }
+        .icon-amber { background: rgba(251, 191, 36, 0.12); color: #fbbf24; }
+
+        .link-card-arrow {
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: all 0.3s ease;
+        }
+
+        .link-card:hover .link-card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+            color: var(--primary);
+        }
+
+        .link-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
         }
 
         .link-card p {
             color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.5;
+            font-size: 13.5px;
+            line-height: 1.55;
         }
 
+        /* ── Browser frame ──────────────────────── */
         .browser-frame {
             width: 100%;
             min-height: 700px;
             background: #ffffff;
-            border: 1px solid var(--border-glass);
+            border: 1px solid var(--border-strong);
             border-radius: 16px;
-            box-shadow: var(--shadow-card);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
         }
 
         .loading {
             text-align: center;
-            padding: 80px 20px;
+            padding: 96px 20px;
         }
 
         .spinner-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 24px;
+            gap: 26px;
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid var(--bg-card);
-            border-top-color: var(--primary-color);
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
-            animation: spin 1.5s linear infinite;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            background: conic-gradient(from 0deg, transparent 10%, var(--primary));
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), black calc(100% - 3px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 4px), black calc(100% - 3px));
+            animation: spin 0.9s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.4));
         }
 
         @keyframes spin {
@@ -382,23 +535,24 @@
         }
 
         .loading-text {
-            font-size: 16px;
-            color: var(--text-secondary);
-            font-weight: 500;
+            font-size: 15.5px;
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .loading-subtext {
             font-size: 13px;
             color: var(--text-muted);
+            margin-top: 6px;
         }
 
         .error-message {
-            background: rgba(255, 68, 68, 0.08);
-            border: 1px solid rgba(255, 68, 68, 0.3);
+            background: rgba(248, 113, 113, 0.07);
+            border: 1px solid rgba(248, 113, 113, 0.28);
             border-radius: 16px;
             padding: 24px;
             margin: 20px 0;
-            animation: shake 0.5s ease;
+            animation: shake 0.45s ease;
         }
 
         @keyframes shake {
@@ -408,12 +562,9 @@
         }
 
         .error-message h3 {
-            color: var(--error-color);
+            color: var(--error);
             margin-bottom: 12px;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 17px;
         }
 
         .error-message p {
@@ -422,73 +573,77 @@
         }
 
         .tips {
-            background: rgba(0, 212, 255, 0.08);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: rgba(56, 189, 248, 0.06);
+            border: 1px solid rgba(56, 189, 248, 0.25);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px 20px;
             margin-top: 16px;
         }
 
         .tips h4 {
-            color: var(--secondary-color);
-            margin-bottom: 12px;
-            font-size: 14px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 13.5px;
             font-weight: 600;
         }
 
         .tips ul {
             list-style: none;
-            padding-left: 0;
         }
 
         .tips li {
-            padding: 8px 0;
+            padding: 6px 0 6px 20px;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 13.5px;
             position: relative;
-            padding-left: 24px;
         }
 
         .tips li::before {
             content: '';
             position: absolute;
-            left: 0;
+            left: 2px;
             top: 50%;
             transform: translateY(-50%);
-            width: 6px;
-            height: 6px;
-            background: var(--secondary-color);
+            width: 5px;
+            height: 5px;
+            background: var(--secondary);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--secondary-color);
         }
 
         .page-info {
-            margin-bottom: 16px;
-            padding: 14px 20px;
-            background: var(--bg-glass);
-            border: 1px solid var(--border-glass);
-            border-radius: 12px;
+            margin-bottom: 14px;
+            padding: 11px 18px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 999px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .page-info-label {
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
         }
 
         .page-info-value {
-            color: var(--primary-color);
-            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
-            font-size: 14px;
+            color: var(--primary);
+            font-family: var(--font-mono);
+            font-size: 13px;
             font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         @media (max-width: 768px) {
             .header {
                 flex-wrap: wrap;
-                gap: 12px;
+                gap: 10px;
+                padding: 12px 16px;
             }
 
             .url-bar {
@@ -496,37 +651,57 @@
                 order: 3;
             }
 
-            .welcome-title {
-                font-size: 36px;
+            .content-area {
+                padding: 20px 14px 32px;
+            }
+
+            .welcome-screen {
+                padding-top: 40px;
             }
 
             .quick-links {
                 grid-template-columns: 1fr;
             }
 
-            .link-card {
-                padding: 20px;
-            }
-
             .status-bar {
                 flex-direction: column;
-                gap: 8px;
+                gap: 6px;
                 text-align: center;
+                padding: 10px 16px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="ambient">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
     <div class="header">
         <div class="logo">
-            <span class="logo-icon">◈</span>
-            I2P Browser
+            <span class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M2 12h20"></path>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            </span>
+            <span class="logo-text">I2P Browser</span>
         </div>
-        <button class="btn-home" id="homeBtn" onclick="goHome()" style="display: none;">
-            🏠 Home
+        <button class="btn-icon" id="homeBtn" onclick="goHome()" style="display: none;" title="Home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5 12 3l9 7.5"></path>
+                <path d="M5 9.5V21h14V9.5"></path>
+            </svg>
         </button>
         <div class="url-bar">
-            <input type="text" class="url-input" id="urlInput" placeholder="Enter URL (e.g., stats.i2p or bobthebuilder.i2p)">
+            <svg class="url-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+            </svg>
+            <input type="text" class="url-input" id="urlInput" placeholder="Enter URL (e.g., stats.i2p)" spellcheck="false" autocomplete="off">
             <button class="btn" id="goBtn" onclick="navigate()">Go</button>
         </div>
     </div>
@@ -542,37 +717,80 @@
     <div class="content-area" id="contentArea">
         <div class="welcome-screen" id="welcomeScreen">
             <div class="welcome-header">
-                <h1 class="welcome-title">◈ I2P Browser ◈</h1>
-                <p class="welcome-subtitle">Anonymous. Decentralized. Secure.</p>
+                <div class="welcome-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Invisible Internet Project
+                </div>
+                <h1 class="welcome-title">Browse the <span class="gradient">invisible web</span></h1>
+                <p class="welcome-subtitle">Anonymous. Decentralized. Secure. Explore I2P sites through an encrypted, peer-to-peer network.</p>
             </div>
-            
+
             <div class="quick-links">
                 <div class="link-card" onclick="loadUrl('stats.i2p')">
-                    <h3>
-                        <span class="link-card-icon">📊</span>
-                        <span class="link-card-title">I2P Stats</span>
-                    </h3>
+                    <div class="link-card-head">
+                        <span class="link-card-icon icon-green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 3v18h18"></path>
+                                <path d="M7 15l4-6 4 3 5-8"></path>
+                            </svg>
+                        </span>
+                        <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 17 17 7"></path>
+                            <path d="M8 7h9v9"></path>
+                        </svg>
+                    </div>
+                    <h3>I2P Stats</h3>
                     <p>View real-time I2P network statistics and performance metrics</p>
                 </div>
                 <div class="link-card" onclick="loadUrl('echelon.i2p')">
-                    <h3>
-                        <span class="link-card-icon">📰</span>
-                        <span class="link-card-title">Echelon</span>
-                    </h3>
+                    <div class="link-card-head">
+                        <span class="link-card-icon icon-blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-4"></path>
+                                <path d="M18 14h-8"></path>
+                                <path d="M15 18h-5"></path>
+                                <path d="M10 6h8v4h-8z"></path>
+                            </svg>
+                        </span>
+                        <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 17 17 7"></path>
+                            <path d="M8 7h9v9"></path>
+                        </svg>
+                    </div>
+                    <h3>Echelon</h3>
                     <p>Stay updated with the latest news from the I2P community</p>
                 </div>
                 <div class="link-card" onclick="loadUrl('i2pforum.i2p')">
-                    <h3>
-                        <span class="link-card-icon">💬</span>
-                        <span class="link-card-title">I2P Forum</span>
-                    </h3>
+                    <div class="link-card-head">
+                        <span class="link-card-icon icon-purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </span>
+                        <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 17 17 7"></path>
+                            <path d="M8 7h9v9"></path>
+                        </svg>
+                    </div>
+                    <h3>I2P Forum</h3>
                     <p>Join discussions with the I2P community</p>
                 </div>
                 <div class="link-card" onclick="loadUrl('127.0.0.1:7657')">
-                    <h3>
-                        <span class="link-card-icon">⚙️</span>
-                        <span class="link-card-title">I2P Console</span>
-                    </h3>
+                    <div class="link-card-head">
+                        <span class="link-card-icon icon-amber">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                        </span>
+                        <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 17 17 7"></path>
+                            <path d="M8 7h9v9"></path>
+                        </svg>
+                    </div>
+                    <h3>I2P Console</h3>
                     <p>Configure and manage your I2P router settings</p>
                 </div>
             </div>
@@ -589,7 +807,7 @@
                 </div>
             </div>
             <div id="pageInfo" class="page-info" style="display: none;">
-                <span class="page-info-label">URL:</span>
+                <span class="page-info-label">URL</span>
                 <span class="page-info-value" id="pageUrl"></span>
             </div>
             <iframe id="contentFrame" class="browser-frame" style="display: none;" sandbox="allow-same-origin allow-scripts"></iframe>
@@ -604,10 +822,10 @@
             try {
                 const response = await fetch('/api/status');
                 const data = await response.json();
-                
+
                 const indicator = document.getElementById('statusIndicator');
                 const statusText = document.getElementById('statusText');
-                
+
                 if (data.running) {
                     indicator.className = 'status-indicator status-online';
                     statusText.textContent = 'I2P router running';
@@ -623,12 +841,12 @@
         async function navigate() {
             const urlInput = document.getElementById('urlInput');
             const url = urlInput.value.trim();
-            
+
             if (!url) {
                 alert('Please enter a URL');
                 return;
             }
-            
+
             loadUrl(url);
         }
 
@@ -642,70 +860,56 @@
         }
 
         async function loadUrl(url) {
-            console.log('🔹 Received URL:', url);
-            
             url = url.trim().replace(/^\/+|\/+$/g, '');
-            
+
             const hasProtocol = url.startsWith('http://') || url.startsWith('https://');
             if (!hasProtocol) {
                 url = 'http://' + url;
             }
-            
-            try {
-                const urlObj = new URL(url);
-                console.log('✅ Valid URL:', urlObj.href);
-            } catch (e) {
-                console.error('❌ Invalid URL:', url, e);
-            }
-            
+
             currentUrl = url;
             document.getElementById('urlInput').value = url.replace('http://', '').replace('https://', '');
-            
+
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('browserContent').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'block';
             document.getElementById('pageInfo').style.display = 'none';
             document.getElementById('contentFrame').style.display = 'none';
             document.getElementById('pageContent').innerHTML = '';
-            
-            document.getElementById('homeBtn').style.display = 'block';
-            
+
+            document.getElementById('homeBtn').style.display = 'flex';
+
             document.getElementById('goBtn').disabled = true;
-            
-            console.log('🔸 Final URL to load:', url);
-            
+
             const frame = document.getElementById('contentFrame');
             frame.onload = function() {
-                console.log('✅ Page loaded');
                 document.getElementById('loadingIndicator').style.display = 'none';
                 frame.style.display = 'block';
-                
+
                 const pageUrl = document.getElementById('pageUrl');
                 pageUrl.textContent = url;
                 document.getElementById('pageInfo').style.display = 'flex';
-                
+
                 document.getElementById('goBtn').disabled = false;
             };
-            
+
             frame.onerror = function() {
-                console.error('❌ Page load error');
                 document.getElementById('loadingIndicator').style.display = 'none';
                 showError('Failed to load page');
                 document.getElementById('goBtn').disabled = false;
             };
-            
+
             const proxyUrl = window.location.protocol + '//' + window.location.host + '/proxy?url=' + encodeURIComponent(url);
-            console.log('🔗 Proxy URL:', proxyUrl);
             frame.src = proxyUrl;
         }
 
         function showError(error, tips) {
             let html = `
                 <div class="error-message">
-                    <h3>❌ Error</h3>
+                    <h3>Error</h3>
                     <p>${escapeHtml(error)}</p>
             `;
-            
+
             if (tips && tips.length > 0) {
                 html += `
                     <div class="tips">
@@ -717,7 +921,7 @@
                 });
                 html += `</ul></div>`;
             }
-            
+
             html += `</div>`;
             document.getElementById('pageContent').innerHTML = html;
         }
@@ -734,8 +938,17 @@
             }
         });
 
+        // Spotlight effect on quick-link cards
+        document.querySelectorAll('.link-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+                card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+            });
+        });
+
         checkI2PStatus();
-        
+
         setInterval(checkI2PStatus, 30000);
     </script>
 </body>
