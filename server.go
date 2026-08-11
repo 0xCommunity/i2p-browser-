@@ -6,8 +6,95 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 )
+
+// Headers that must not be forwarded from the upstream response.
+// CSP/X-Frame-Options would block resources and framing; Content-Length/
+// Content-Encoding are stale after we rewrite the body.
+var skipHeaders = map[string]bool{
+	"Connection":                          true,
+	"Transfer-Encoding":                   true,
+	"Content-Length":                      true,
+	"Content-Encoding":                    true,
+	"Content-Security-Policy":             true,
+	"Content-Security-Policy-Report-Only": true,
+	"X-Frame-Options":                     true,
+	"Strict-Transport-Security":           true,
+}
+
+var (
+	htmlAttrRe  = regexp.MustCompile(`(?i)\b(href|src|action|poster)\s*=\s*(["'])([^"']*)["']`)
+	srcsetRe    = regexp.MustCompile(`(?i)\bsrcset\s*=\s*(["'])([^"']*)["']`)
+	styleAttrRe = regexp.MustCompile(`(?i)\bstyle\s*=\s*(["'])([^"']*)["']`)
+	cssURLRe    = regexp.MustCompile(`url\(\s*(['"]?)([^'")\s]+)['"]?\s*\)`)
+	cssImportRe = regexp.MustCompile(`@import\s+(["'])([^"']+)["']`)
+)
+
+// proxify converts a URL found in proxied content into a /proxy?url= URL,
+// resolving relative URLs against the page's base URL.
+func proxify(raw string, base *url.URL) string {
+	low := strings.ToLower(strings.TrimSpace(raw))
+	if raw == "" || strings.HasPrefix(low, "#") || strings.HasPrefix(low, "javascript:") ||
+		strings.HasPrefix(low, "mailto:") || strings.HasPrefix(low, "data:") ||
+		strings.HasPrefix(low, "tel:") || strings.HasPrefix(low, "/proxy") {
+		return raw
+	}
+	abs, err := base.Parse(raw)
+	if err != nil {
+		return raw
+	}
+	return "/proxy?url=" + url.QueryEscape(abs.String())
+}
+
+// rewriteHTML rewrites link/resource URLs in HTML so they load through the proxy.
+func rewriteHTML(body string, base *url.URL) string {
+	body = htmlAttrRe.ReplaceAllStringFunc(body, func(m string) string {
+		p := htmlAttrRe.FindStringSubmatch(m)
+		return p[1] + "=" + p[2] + proxify(p[3], base) + p[2]
+	})
+	body = srcsetRe.ReplaceAllStringFunc(body, func(m string) string {
+		p := srcsetRe.FindStringSubmatch(m)
+		entries := strings.Split(p[2], ",")
+		for i, e := range entries {
+			fields := strings.Fields(strings.TrimSpace(e))
+			if len(fields) > 0 {
+				fields[0] = proxify(fields[0], base)
+				entries[i] = strings.Join(fields, " ")
+			}
+		}
+		return "srcset=" + p[1] + strings.Join(entries, ", ") + p[1]
+	})
+	// Rewrite url() references inside inline style attributes
+	body = styleAttrRe.ReplaceAllStringFunc(body, func(m string) string {
+		p := styleAttrRe.FindStringSubmatch(m)
+		return "style=" + p[1] + rewriteCSSURLs(p[2], base) + p[1]
+	})
+	return body
+}
+
+// rewriteCSSURLs rewrites only url() references (used for inline styles).
+func rewriteCSSURLs(css string, base *url.URL) string {
+	return cssURLRe.ReplaceAllStringFunc(css, func(m string) string {
+		p := cssURLRe.FindStringSubmatch(m)
+		return "url(" + p[1] + proxify(p[2], base) + p[1] + ")"
+	})
+}
+
+// rewriteCSS rewrites url() and @import references in CSS so images, fonts
+// and nested stylesheets load through the proxy.
+func rewriteCSS(css string, base *url.URL) string {
+	css = cssURLRe.ReplaceAllStringFunc(css, func(m string) string {
+		p := cssURLRe.FindStringSubmatch(m)
+		return "url(" + p[1] + proxify(p[2], base) + p[1] + ")"
+	})
+	css = cssImportRe.ReplaceAllStringFunc(css, func(m string) string {
+		p := cssImportRe.FindStringSubmatch(m)
+		return "@import " + p[1] + proxify(p[2], base) + p[1]
+	})
+	return css
+}
 
 // startWebServer starts the web server for the browser UI
 func startWebServer() {
@@ -251,8 +338,11 @@ func handleProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Copy headers
+	// Copy headers, skipping ones that would break framing or stale after rewriting
 	for key, values := range resp.Header {
+		if skipHeaders[http.CanonicalHeaderKey(key)] {
+			continue
+		}
 		for _, value := range values {
 			w.Header().Set(key, value)
 		}
@@ -260,77 +350,16 @@ func handleProxy(w http.ResponseWriter, r *http.Request) {
 
 	// Set CORS headers to allow iframe embedding
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("X-Frame-Options", "ALLOWALL")
 
-	// For HTML content, rewrite all URLs to go through proxy
+	// Rewrite URLs in HTML/CSS content so all resources load through the proxy
 	contentType := resp.Header.Get("Content-Type")
-	if strings.Contains(contentType, "text/html") {
-		bodyStr = string(body)
+	base, _ := url.Parse(targetURL)
 
-		// Inject JavaScript to rewrite URLs
-		proxyScript := fmt.Sprintf(`
-<script>
-(function() {
-	const proxyBase = '%s';
-	const targetBase = '%s';
-	
-	// Rewrite all links to go through proxy
-	document.querySelectorAll('a[href]').forEach(a => {
-		try {
-			const href = a.getAttribute('href');
-			if (href && !href.startsWith('#') && !href.startsWith('javascript:') && !href.startsWith('mailto:')) {
-				const absoluteUrl = new URL(href, targetBase).href;
-				a.href = proxyBase + encodeURIComponent(absoluteUrl);
-			}
-		} catch(e) {}
-	});
-	
-	// Rewrite all image sources
-	document.querySelectorAll('img[src]').forEach(img => {
-		try {
-			const src = img.getAttribute('src');
-			if (src && !src.startsWith('data:')) {
-				const absoluteUrl = new URL(src, targetBase).href;
-				img.src = proxyBase + encodeURIComponent(absoluteUrl);
-			}
-		} catch(e) {}
-	});
-	
-	// Rewrite stylesheet links
-	document.querySelectorAll('link[rel="stylesheet"][href]').forEach(link => {
-		try {
-			const href = link.getAttribute('href');
-			if (href) {
-				const absoluteUrl = new URL(href, targetBase).href;
-				link.href = proxyBase + encodeURIComponent(absoluteUrl);
-			}
-		} catch(e) {}
-	});
-	
-	// Rewrite script sources
-	document.querySelectorAll('script[src]').forEach(script => {
-		try {
-			const src = script.getAttribute('src');
-			if (src && !src.startsWith('http')) {
-				const absoluteUrl = new URL(src, targetBase).href;
-				script.src = proxyBase + encodeURIComponent(absoluteUrl);
-			}
-		} catch(e) {}
-	});
-})();
-</script>
-`, "/proxy?url=", targetURL)
-
-		// Inject script before </body> or at end of <head>
-		if strings.Contains(bodyStr, "</body>") {
-			bodyStr = strings.Replace(bodyStr, "</body>", proxyScript+"</body>", 1)
-		} else if strings.Contains(bodyStr, "</head>") {
-			bodyStr = strings.Replace(bodyStr, "</head>", proxyScript+"</head>", 1)
-		} else {
-			bodyStr += proxyScript
-		}
-
-		body = []byte(bodyStr)
+	if strings.Contains(contentType, "text/css") {
+		body = []byte(rewriteCSS(string(body), base))
+	} else if strings.Contains(contentType, "text/html") {
+		// URLs are already rewritten server-side; no JS injection needed.
+		body = []byte(rewriteHTML(string(body), base))
 	}
 
 	// Set status code
